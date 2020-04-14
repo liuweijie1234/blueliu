@@ -65,26 +65,22 @@
                 <div class="form-group clearfix ">
                     <label class="col-sm-2 bk-lh30">选择业务：</label>
                     <div class="col-sm-4">
-                        <select name="" id="" class="form-control bk-valign-top">
-                            <option value="选择项1">选择项1</option>
+                        <select name="" id="" class="form-control bk-valign-top ele">
+                            {% for biz_name, biz_id in info %}
+                                <option value={{ biz_id }}>{{ biz_name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
 
                     <label class="col-sm-2 bk-lh30 pt0">选择脚本：</label>
                     <div class="col-sm-4">
-                        <select name="" id="" class="form-control bk-valign-top">
+                        <select name="" id="" class="form-control bk-valign-top ele1">
                             {% for task in tasks %}
                                 <option value={{ task.id }}>{{ task.scriptname }}</option>
                             {% endfor %}
                         </select>
                     </div>
                 </div>
-                <!--
-                如果没有引用以下文件，请去掉此注释
-                <link href="https://magicbox.bk.tencent.com/static_api/v3/assets/bootstrap-3.3.4/css/bootstrap.min.css" rel="stylesheet">
-                <link href="https://magicbox.bk.tencent.com/static_api/v3/bk/css/bk.css" rel="stylesheet">
-                <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/js/jquery-1.10.2.min.js"></script>
-                -->
                 <div class="panel panel-default pannel-overflow panel-tables table7_demo">
                     <div class="panel-content">
                         <table class="table table-header-bg table-hover mb0" id="table_demo2">
@@ -101,20 +97,22 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>
-                                        <input type="checkbox" value="">
-                                    </td>
-                                    <td>1</td>
-                                    <td>10.0.01</td>
-                                    <td>linux-centos7-xxxx</td>
-                                    <td>linux</td>
-                                    <td>
-                                        <button class="btn btn-xs btn-danger" title="删除">
-                                            <i class="glyphicon glyphicon-remove"></i>
-                                        </button>
-                                    </td>
-                                </tr>
+                                {% for hosts in data %}
+                                    <tr>
+                                        <td>
+                                            <input class="hostip" type="checkbox" value={{ hosts.ip }}>
+                                        </td>
+                                        <td>{{ hosts.host_id }}</td>
+                                        <td>{{ hosts.ip }}</td>
+                                        <td>{{ hosts.name }}</td>
+                                        <td>{{ hosts.os }}</td>
+                                        <td>
+                                            <button class="btn btn-xs btn-danger" title="删除">
+                                                <i class="glyphicon glyphicon-remove"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
                             </tbody>
 
                         </table>
@@ -146,5 +144,46 @@
         </div>
     </div>
 </body>
+<script>
+    ips=[];
+    $(".ele").change(function() {
+        ips=[];
+        $.ajax({
+            url: '{{ SITE_URL }}api/get_host/',
+            type: 'GET',
+            data:{
+                'biz_id': $('.ele').val(),
+                'csrfmiddlewaretoken': "{{ csrf_token }}"
+            },
+            success: function(res) {
+                if (res.result) {
+                    $('#table_demo2 tbody').html(res.data)
+                } else {
+                    alert(res.message);
+                }
+            }
+        })
+    });
+    $(document).on('change','input.hostip',function () {
+        $('input:checkbox:checked').each(function() {});
+        ips.push($(this).val());
+        console.log(ips);
+    });
 
+    $('.king-success').click(function () {
+        $.ajax({
+            url: '{{ SITE_URL }}api/execute/',
+            type: 'POST',
+            data:{
+                "biz_id":$('.ele').val(),
+                "script_id":$('.ele1').val(),
+                "ip_id":ips,
+                'csrfmiddlewaretoken': "{{ csrf_token }}"
+            },
+            success: function (response) {
+                console.log(response["result","message","data"])
+            }
+        })
+    });
+</script>
 </html>
