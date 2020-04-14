@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+    <!-- 若您需要使用Kendo UI Professional，请联系版权人获得合法的授权或许可。 -->
+    <!-- Bootstrap css -->
+    <link href="https://magicbox.bk.tencent.com/static_api/v3/assets/bootstrap-3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <!-- kendo ui css -->
+    <link href="https://magicbox.bk.tencent.com/static_api/v3/assets/kendoui-2015.2.624/styles/kendo.common.min.css" rel="stylesheet">
+    <link href="https://magicbox.bk.tencent.com/static_api/v3/assets/kendoui-2015.2.624/styles/kendo.default.min.css" rel="stylesheet">
+    <!-- font-awesome -->
+    <link href="https://magicbox.bk.tencent.com/static_api/v3/assets/fontawesome/css/font-awesome.css" rel="stylesheet">
+    <!--蓝鲸提供的公用样式库 -->
+    <link href="https://magicbox.bk.tencent.com/static_api/v3/bk/css/bk.css" rel="stylesheet">
+    <link href="https://magicbox.bk.tencent.com/static_api/v3/bk/css/bk_pack.css" rel="stylesheet">
+    <!-- 如果要使用Bootstrap的js插件，必须先调入jQuery -->
+    <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/js/jquery-1.10.2.min.js"></script>
+    <!-- 包括所有bootstrap的js插件或者可以根据需要使用的js插件调用　-->
+    <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/echarts-2.0/echarts-all.js"></script>
+    <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/bootstrap-3.3.4/js/bootstrap.min.js"></script>
+    <!-- 包括所有kendoui的js插件或者可以根据需要使用的js插件调用　-->
+    <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/kendoui-2015.2.624/js/kendo.all.min.js"></script>
+    <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/echarts-2.0/echarts-all.js"></script>
+    <script src="https://magicbox.bk.tencent.com/static_api/v3/bk/js/bk.js"></script>
+    <!-- 数据埋点统计 -->
+    <script src="http://magicbox.bk.tencent.com/static_api/analysis.js"></script>
+    <!-- 以下两个插件用于在IE8以及以下版本浏览器支持HTML5元素和媒体查询，如果不需要用可以移除 -->
+    <!--[if lt IE 9]><script src="https://magicbox.bk.tencent.com/static_api/v3/assets/js/html5shiv.min.js"></script><script src="https://magicbox.bk.tencent.com/static_api/v3/assets/js/respond.min.js"></script><![endif]-->
+    <link href="https://magicbox.bk.tencent.com/static_api/v3/assets/daterangepicker-2.0.5/daterangepicker-2.0.css" rel="stylesheet">
+    <link href="https://magicbox.bk.tencent.com/static_api/v3/bk/css-pro/bk.css" rel="stylesheet">
+    <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/daterangepicker-2.0.5/moment.min.js"></script>
+    <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/daterangepicker-2.0.5/daterangepicker.js"></script>
+</head>
+
+<body class="bg-white" data-bg-color="bg-white">
+    <div class="king-page-box">
+        <div class="king-container clearfix" >
+            <nav class="">
+                <div style="overflow:hidden; z-index: inherit;" class="navbar king-horizontal-nav1  f14">
+                    <div class="navbar-container">
+                        <div class="navbar-header pull-left">
+                            <a class="navbar-brand" href="javascript:;">
+                                <img src="https://magicbox.bk.tencent.com/static_api/v3/bk/images/logo.png" class="logo"> </a>
+                        </div>
+                        <ul class="nav navbar-nav pull-left m0">
+                            <li><a href="{{ SITE_URL }}tasks">执行任务</a></li>
+                            <li class="active"><a href="{{ SITE_URL }}record">任务记录</a></li>
+                        </ul>
+                        <div class="navbar-header pull-right">
+                            <ul class="nav">
+                                <li class="user-info">
+                                    <a href="javascript:;">
+                                        <img class="img-rounded" src="https://magicbox.bk.tencent.com/static_api/v3/components/horizontal_nav1/images/avatar.png">
+                                        <span>admin</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+            <form class="form-horizontal" >
+                <div class="form-group clearfix f14">
+                    <label class="col-sm-3 control-label bk-lh30 pt0">选择业务：</label>
+                    <div class="col-sm-9">
+                        <select name="" id="" class="bk-valign-top" style="width: 30%;height: 28px;">
+                            <option value="选择项1">选择项1</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group clearfix ">
+                    <label class="col-sm-3 control-label bk-lh30 pt0">选择用户：</label>
+                    <div class="col-sm-9">
+                        <select name="" id="" class="bk-valign-top" style="width: 30%;height: 28px;">
+                            <option value="选择项1">选择项1</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group clearfix ">
+                    <label class="col-sm-3 control-label bk-lh30 pt0">选择脚本：</label>
+                    <div class="col-sm-9">
+                        <select name="" id="" class="bk-valign-top" style="width: 30%;height: 28px;">
+                            <option value="选择项1">选择项1</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group clearfix ">
+                    <label class="col-sm-3 control-label bk-lh30 pt0">选择日期：</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="bk-form-input daterangepicker_demo" id="daterangepicker_demo2" style="width: 30%;height: 28px;" placeholder="选择日期...">
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    // 选择日期范围
+                            $('#daterangepicker_demo2').daterangepicker({
+                                locale: {
+                                    "format": 'YYYY/MM/DD'
+                                },
+                                autoApply: true
+                            });
+                </script>
+                <div class="form-group clearfix">
+                    <div class="col-sm-9 col-sm-offset-3">
+                        <button type="button" class="king-btn mr10  king-success">查询</button>
+                    </div>
+                </div>
+                <table class="table mb0 pr15 ranger-box2">
+                    <thead>
+                        <tr>
+                            <th style="width: 70px;">业务</th>
+                            <th>用户</th>
+                            <th>任务</th>
+                            <th>操作时间</th>
+                            <th>机器数</th>
+                            <th>状态</th>
+                            <th>脚本内容</th>
+                            <th>详情</th>
+                            <th>日志</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>admin</td>
+                            <td>查看机器CPU性能</td>
+                            <td>23/12/2012</td>
+                            <td>1</td>
+                            <td>3</td>
+                            <td>linux 命令</td>
+                            <td>true</td>
+                            <td>
+                                <button class="btn btn-xs btn-primary" title="查看" id="plugin4_demo11" >查看</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- 设置面板End -->
+            </form>
+        </div>
+    </div>
+    <script>
+        $(function(){
+                function renderTpl(str, cfg) {
+                    var re = /(#(.+?)#)/g;
+
+                    return str.replace(re, function() {
+                        var val = cfg[arguments[2]]+'';
+                        if(typeof val == 'undefined') {
+                            val = '';
+                        }
+                        return val;
+                    });
+                }
+
+                // 异步请求后台数据
+                $.ajax({
+                    url: 'https://magicbox.bk.tencent.com/static_api/v3/components/table7/data.json',
+                    type: 'GET',
+                    success: function(res){
+                        var _html = ' ';
+                        var list = res.items;
+                        var tpl = $('#tpl_15867701085112').html();
+                        var headerTpl =  $('#header_tpl_15867701085112').html();
+                        for (var i=0,len=list.length; i < len; i++){
+                            var item = list[i];
+                            _html += renderTpl(tpl, item)
+                        }
+                        $('.ranger-box2 tbody').html(_html);
+                        $('.ranger-box2 thead').html(renderTpl(headerTpl,res.catalogues));
+                    }
+                });
+            });
+    </script>
+
+</body>
+</html>
