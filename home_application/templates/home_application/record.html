@@ -32,8 +32,10 @@
     <!--[if lt IE 9]><script src="https://magicbox.bk.tencent.com/static_api/v3/assets/js/html5shiv.min.js"></script><script src="https://magicbox.bk.tencent.com/static_api/v3/assets/js/respond.min.js"></script><![endif]-->
     <link href="https://magicbox.bk.tencent.com/static_api/v3/assets/daterangepicker-2.0.5/daterangepicker-2.0.css" rel="stylesheet">
     <link href="https://magicbox.bk.tencent.com/static_api/v3/bk/css-pro/bk.css" rel="stylesheet">
+    <link href="https://magicbox.bk.tencent.com/static_api/v3/assets/artDialog-6.0.4/css/ui-dialog.css" rel="stylesheet">
     <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/daterangepicker-2.0.5/moment.min.js"></script>
     <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/daterangepicker-2.0.5/daterangepicker.js"></script>
+    <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/artDialog-6.0.4/dist/dialog-min.js"></script>
 </head>
 
 <body class="bg-white" data-bg-color="bg-white">
@@ -67,24 +69,30 @@
                 <div class="form-group clearfix f14">
                     <label class="col-sm-3 control-label bk-lh30 pt0">选择业务：</label>
                     <div class="col-sm-9">
-                        <select name="" id="" class="bk-valign-top" style="width: 30%;height: 28px;">
-                            <option value="选择项1">选择项1</option>
+                        <select name="" id="" class="bk-valign-top ele" style="width: 30%;height: 28px;">
+                            {% for biz_name, biz_id in info %}
+                                <option value={{ biz_id }}>{{ biz_name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
                 <div class="form-group clearfix ">
                     <label class="col-sm-3 control-label bk-lh30 pt0">选择用户：</label>
                     <div class="col-sm-9">
-                        <select name="" id="" class="bk-valign-top" style="width: 30%;height: 28px;">
-                            <option value="选择项1">选择项1</option>
+                        <select class="bk-valign-top ele1" style="width: 30%;height: 28px;">
+                            {% for username in usernames %}
+                                <option value={{ username }}>{{ username }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
                 <div class="form-group clearfix ">
                     <label class="col-sm-3 control-label bk-lh30 pt0">选择脚本：</label>
                     <div class="col-sm-9">
-                        <select name="" id="" class="bk-valign-top" style="width: 30%;height: 28px;">
-                            <option value="选择项1">选择项1</option>
+                        <select class="bk-valign-top ele2" style="width: 30%;height: 28px;">
+                            {% for task in tasks %}
+                                <option value={{ task.id }}>{{ task.scriptname }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                 </div>
@@ -94,21 +102,12 @@
                         <input type="text" class="bk-form-input daterangepicker_demo" id="daterangepicker_demo2" style="width: 30%;height: 28px;" placeholder="选择日期...">
                     </div>
                 </div>
-                <script type="text/javascript">
-                    // 选择日期范围
-                            $('#daterangepicker_demo2').daterangepicker({
-                                locale: {
-                                    "format": 'YYYY/MM/DD'
-                                },
-                                autoApply: true
-                            });
-                </script>
                 <div class="form-group clearfix">
                     <div class="col-sm-9 col-sm-offset-3">
                         <button type="button" class="king-btn mr10  king-success">查询</button>
                     </div>
                 </div>
-                <table class="table mb0 pr15 ranger-box2">
+                <table class="table mb0 pr15 ranger-box2" id="table_demo2">
                     <thead>
                         <tr>
                             <th style="width: 70px;">业务</th>
@@ -123,59 +122,71 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>admin</td>
-                            <td>查看机器CPU性能</td>
-                            <td>23/12/2012</td>
-                            <td>1</td>
-                            <td>3</td>
-                            <td>linux 命令</td>
-                            <td>true</td>
-                            <td>
-                                <button class="btn btn-xs btn-primary" title="查看" id="plugin4_demo11" >查看</button>
-                            </td>
-                        </tr>
+                        {% for doinfo in doinfos %}
+                            <tr>
+                                <td>{{ doinfo.businessname }}</td>
+                                <td>{{ doinfo.username }}</td>
+                                <td>{{ doinfo.script.scriptname }}</td>
+                                <td>{{ doinfo.starttime }}</td>
+                                <td>{{ doinfo.ipcount }}</td>
+                                <td>{{ doinfo.status }}</td>
+                                <td>{{ doinfo.script.scriptcontent }}</td>
+                                <td>{{ doinfo.details }}</td>
+                                <td>
+                                    <button class="btn btn-xs btn-primary demo11" title="查看" >查看</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
-
-                <!-- 设置面板End -->
             </form>
         </div>
     </div>
-    <script>
-        $(function(){
-                function renderTpl(str, cfg) {
-                    var re = /(#(.+?)#)/g;
+<script type="text/javascript">
+// 选择日期范围
+    $('#daterangepicker_demo2').daterangepicker({
+        locale: {
+            "format": 'YYYY/MM/DD'
+        },
+        autoApply: true
+    });
 
-                    return str.replace(re, function() {
-                        var val = cfg[arguments[2]]+'';
-                        if(typeof val == 'undefined') {
-                            val = '';
-                        }
-                        return val;
-                    });
+// 查看日志
+    $(".demo11").click(function(){
+        var d = dialog({
+            width: 600,
+            title: "日志详情",
+            content: '<div class="king-notice3 king-notice-success">'+
+                '<div class="king-notice-text">'+
+                    '<p class="f24">日志详情</p>'+
+                    '<p class="f12">该接口暂未实现</p>'+
+                '</div>'+
+            '</div>',
+        });
+        d.show();
+    });
+// 根据选择查询
+   $('.king-success').click(function () {
+        $.ajax({
+            url: '{{ SITE_URL }}api/inquiry/',
+            type: 'POST',
+            data:{
+                "biz_id":$('.ele').val(),
+                "username":$('.ele1').val(),
+                "script_id":$('.ele2').val(),
+                "time":$('#daterangepicker_demo2').val(),
+                'csrfmiddlewaretoken': "{{ csrf_token }}"
+            },
+            success: function (res) {
+                if (res.result) {
+                    $('#table_demo2 tbody').html(res.data)
+                } else {
+                    alert('查不到数据')
                 }
-
-                // 异步请求后台数据
-                $.ajax({
-                    url: 'https://magicbox.bk.tencent.com/static_api/v3/components/table7/data.json',
-                    type: 'GET',
-                    success: function(res){
-                        var _html = ' ';
-                        var list = res.items;
-                        var tpl = $('#tpl_15867701085112').html();
-                        var headerTpl =  $('#header_tpl_15867701085112').html();
-                        for (var i=0,len=list.length; i < len; i++){
-                            var item = list[i];
-                            _html += renderTpl(tpl, item)
-                        }
-                        $('.ranger-box2 tbody').html(_html);
-                        $('.ranger-box2 thead').html(renderTpl(headerTpl,res.catalogues));
-                    }
-                });
-            });
-    </script>
+            }
+        })
+    });
+</script>
 
 </body>
 </html>

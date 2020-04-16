@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import render
 from django.template.loader import render_to_string
-from .models import SelectScript
+from .models import SelectScript, Doinfo
 from blueking.component.shortcuts import get_client_by_user
 from blueking.component.shortcuts import get_client_by_request
-import logging, base64, copy
+import logging, base64, copy, datetime
+from datetime import datetime
 from django.http.response import JsonResponse
-
+from .celery_tasks import async_status
 
 client = get_client_by_user("2496234829")
 logger = logging.getLogger(__name__)
@@ -26,7 +27,6 @@ def get_biz_info():
             info = dict(zip(biz_name, biz_id))
     else:
         logger.error(u'请求业务列表失败：%s' % res.get('message'))
-        info = {}
     return info
 
 
@@ -46,8 +46,19 @@ def ser_host(biz_id):
             })
     else:
         logger.error(u'查询主机列表失败：%s' % res.get('message'))
-        hosts = []
     return hosts
+
+
+# 查询所有用户信息
+def get_usernames():
+    res = client.bk_login.get_all_users()
+    usernames = []
+    if res.get('result', False):
+        for i in res['data']:
+            usernames.append(i['bk_username'])
+    else:
+        logger.error(u'查询所有用户列表失败：%s' % res.get('message'))
+    return usernames
 
 
 # ajax 请求业务相应的host,并返回
@@ -82,9 +93,11 @@ def execute_script(request):
     execute_data = client.job.fast_execute_script(kwargs)
     if execute_data.get('result', False):
         data = execute_data['data']
-
         result = True
         message = str(execute_data.get('message'))
+
+        async_status.apply_async(args=[client, data, biz_id, obj, ip_id], kwargs={})
+
     else:
         data = []
         result = False
@@ -102,6 +115,37 @@ def tasks(request):
 
 
 def record(request):
-    return render(request, 'home_application/record.html')
+    tasks = SelectScript.objects.all()
+    doinfos = Doinfo.objects.all()
+    data = {"info": get_biz_info().items(),
+            "usernames": get_usernames(),
+            "tasks": tasks,
+            "doinfos": doinfos}
+    return render(request, 'home_application/record.html', data)
 
 
+# 根据前端返回的数据进行查询
+def inquiry(request):
+    try:
+        biz_id = request.POST.get('biz_id')
+        username = request.POST.get('username')
+        script_id = request.POST.get('script_id')
+        time = request.POST.get('time')  #"2020/03/27 - 2020/03/27"
+        doinfo = Doinfo.objects.all()
+        doinfo = doinfo.filter(businessname=int(biz_id)).filter(username=username).filter(script_id=int(script_id))
+        starttime, endtime = time.split('-')
+        starttime = starttime.strip().replace('/', '-') + ' 00:00:00'
+        endtime = endtime.strip().replace('/', '-') + ' 23:59:00'
+        start_time = datetime.strptime(starttime, '%Y-%m-%d %H:%M:%S')
+        end_time = datetime.strptime(endtime, '%Y-%m-%d %H:%M:%S')
+        doinfo = doinfo.filter(starttime__range=(start_time, end_time))
+        data = [info.to_dict() for info in doinfo]
+        # print(data)
+        table_data = render_to_string('home_application/record_tbody.html', {'doinfos': data})
+        result = True
+        message = "success"
+    except Exception as err:
+        table_data = []
+        result = False
+        message = str(err)
+    return JsonResponse({"result": result, "message": message, "data": table_data})

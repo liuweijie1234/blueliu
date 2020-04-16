@@ -30,6 +30,8 @@
     <script src="http://magicbox.bk.tencent.com/static_api/analysis.js"></script>
     <!-- 以下两个插件用于在IE8以及以下版本浏览器支持HTML5元素和媒体查询，如果不需要用可以移除 -->
     <!--[if lt IE 9]><script src="https://magicbox.bk.tencent.com/static_api/v3/assets/js/html5shiv.min.js"></script><script src="https://magicbox.bk.tencent.com/static_api/v3/assets/js/respond.min.js"></script><![endif]-->
+    <link href="https://magicbox.bk.tencent.com/static_api/v3/assets/artDialog-6.0.4/css/ui-dialog.css" rel="stylesheet">
+    <script src="https://magicbox.bk.tencent.com/static_api/v3/assets/artDialog-6.0.4/dist/dialog-min.js"></script>
 </head>
 
 <body class="bg-white" data-bg-color="bg-white">
@@ -132,7 +134,6 @@
                                     $(this).closest('tr').remove();
                                 }
                             });
-
                     </script>
                 </div>
                 <div class="form-group clearfix" style="text-align:center;">
@@ -144,6 +145,7 @@
         </div>
     </div>
 </body>
+
 <script>
     ips=[];
     $(".ele").change(function() {
@@ -181,7 +183,32 @@
                 'csrfmiddlewaretoken': "{{ csrf_token }}"
             },
             success: function (response) {
-                console.log(response["result","message","data"])
+                console.log(response["result","message","data"]);
+                if(response["result"]){
+                    var d = dialog({
+                        width: 260,
+                        title: '提示',
+                        okValue: '查看任务结果',
+                        content: '<div class="king-notice-box king-notice-success"><p class="king-notice-text">任务提交成功！</p></div>',
+                        cancelValue: '继续执行任务',
+                        ok: function() {
+                           window.location.href="{{ SITE_URL }}record"
+                        },
+                        cancel: function() {
+                            location.reload();
+                            }
+                    });
+                    d.show();
+                }else {
+                    var d = dialog({
+                        width: 260,
+                        title: '提示',
+                        ok: function() {location.reload();},
+                        okValue: '确定',
+                        content: '<div class="king-notice-box king-notice-fail"><p class="king-notice-text">任务提交失败！</p></div>',
+                    });
+                    d.show();
+                }
             }
         })
     });
