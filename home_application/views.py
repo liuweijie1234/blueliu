@@ -135,7 +135,7 @@ def inquiry(request):
         doinfo = doinfo.filter(businessname=int(biz_id)).filter(username=username).filter(script_id=int(script_id))
         starttime, endtime = time.split('-')
         starttime = starttime.strip().replace('/', '-') + ' 00:00:00'
-        endtime = endtime.strip().replace('/', '-') + ' 23:59:00'
+        endtime = endtime.strip().replace('/', '-') + ' 23:59:59'
         start_time = datetime.strptime(starttime, '%Y-%m-%d %H:%M:%S')
         end_time = datetime.strptime(endtime, '%Y-%m-%d %H:%M:%S')
         doinfo = doinfo.filter(starttime__range=(start_time, end_time))
