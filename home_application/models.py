@@ -11,6 +11,7 @@ class SelectScript(models.Model):
     def __str__(self):
         return self.scriptname
 
+
 class Doinfo(models.Model):
     businessname = models.CharField(max_length=50, verbose_name='业务', null=True, blank=True)
     username = models.CharField(max_length=50, verbose_name='用户', null=True, blank=True)
